@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <!--    这个作为父项目统一管理 -->
+    <groupId>com.github.shandongdong</groupId>
+    <artifactId>autotest</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <!--    配置聚合：包含的子模块-->
+    <modules>
+        <!--        指定各个子工程相对路径 -->
+        <module>notification</module>
+        <module>quartz</module>
+    </modules>
+    <!--    这里打包方式需要改为pom -->
+    <packaging>pom</packaging>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <lombok.version>1.14.4</lombok.version>
+        <slf4j-api.version>1.8.0-beta2</slf4j-api.version>
+        <slf4j-log4j12.version>1.8.0-beta2</slf4j-log4j12.version>
+        <log4j.version>1.2.17</log4j.version>
+        <testng.version>6.14.3</testng.version>
+    </properties>
+    <!-- 统一管理依赖版本问题 -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- 开始: lombok -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+            <!-- 结束: lombok -->
+            <!-- 开始: 日志 -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${slf4j-log4j12.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <!-- 结束: 日志 -->
+
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.quartz-scheduler/quartz -->
+            <dependency>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <version>2.3.1</version>
+            </dependency>
+
+
+
+
+        </dependencies>
+    </dependencyManagement>
+
+    <!--    配置当前工程中需要使用的插件 -->
+    <build>
+        <!-- 部署之后最终生成jar包的名称 -->
+        <finalName>AutoTest</finalName>
+        <plugins>
+            <plugin>
+                <!-- cargo是一家专门从事Servlet容器启动的组织。可以通过maven插件、Java API、Ant tasks等多种方式完成部署。
+                  官网： https://codehaus-cargo.github.io/cargo/Tomcat+9.x.html -->
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+                <version>1.7.6</version>
+                <!-- 针对插件进行的配置 -->
+                <configuration>
+                    <!-- 配置当前系统中容器的位置 -->
+                    <container>
+                        <containerId>tomcat9x</containerId>
+                        <home>D:/software/apache-tomcat-9.0.17</home>
+                    </container>
+                    <configuration>
+                        <type>existing</type>
+                        <home>D:/software/apache-tomcat-9.0.17</home>
+                        <!--  配置tomcat端口 -->
+                        <properties>
+                            <cargo.servlet.port>8080</cargo.servlet.port>
+                        </properties>
+                    </configuration>
+                </configuration>
+                <!-- 配置插件在什么阶段执行 -->
+                <executions>
+                    <execution>
+                        <id>cargo-run</id>
+                        <!-- 声明周期的阶段 -->
+                        <phase>install</phase>
+                        <goals>
+                            <!-- 插件的目标 -->
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
