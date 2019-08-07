@@ -2,11 +2,10 @@ package com.github.shandongdong.quartz;
 
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
-import org.quartz.impl.calendar.HolidayCalendar;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.quartz.CronScheduleBuilder.dailyAtHourAndMinute;
 import static org.quartz.DateBuilder.dateOf;
 import static org.quartz.DateBuilder.futureDate;
 import static org.quartz.JobBuilder.newJob;
@@ -26,30 +25,42 @@ public class SimpleTriggerTest {
     public static void main(String[] args) throws Exception {
 
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-        scheduler.start();
+        // 任务的开始时间
+        Date startDate = new Date();
+        // 延迟2秒执行
+        startDate.setTime(startDate.getTime() + 2000);
+        // 任务的结束时间
+        Date endDate = new Date();
+        endDate.setTime(endDate.getTime() + 10000);     // 延迟2秒开始执行，任务结束时间是10秒，那么这个任务理论上是时间是8秒
 
-        // 定义一个job，并将其与我们的 HelloJob class 联系起来
-        JobDetail job = newJob(HelloJob.class)
+
+        // 定义一个job，并将其与我们的 SimpleTriggerJob class 联系起来
+        JobDetail jobDetail = newJob(SimpleTriggerJob.class)
                 .withIdentity("job1", "group1")
                 .build();
 
-        Trigger trigger;
-        // 指定时间触发，每隔10秒执行一次，重复10次：
-//        trigger = repeatCountTrigger(job);
+        // 触发器
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity("trigger1", "group1")
+                .startAt(startDate)          // 设置触发器第一次被触发执行的时间，默认是当前时间
+                .endAt(endDate)              // 设置触发器终止的时间
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                                .withIntervalInSeconds(2)       // 每过2秒触发一次
+                                .withRepeatCount(0)             // 重复的次数.设置为0，表示执行一次。这个执行次数受结束时间影响，不能超过任务结束时间
+//                        .repeatForever()                // 一直循环触发直到任务的结束时间
+                )
+                .build();
 
-        // 5秒以后开始触发，仅执行一次：
-//        trigger = triggerByMiniute(job);
+        scheduler.scheduleJob(jobDetail, trigger);
 
+        System.out.println("====================================调度器执行开始=========> Name:" + scheduler.getSchedulerName() + ", ID：" + scheduler.getSchedulerInstanceId()
+                + ", time:" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        scheduler.start();
 
-        //立即触发，每个5秒执行一次，直到16:11
-        trigger = triggerByEndAt(job);
+//        scheduler.shutdown();
+        System.out.println("====================================调度器执行结束=========> Name:" + scheduler.getSchedulerName() + ", ID：" + scheduler.getSchedulerInstanceId()
+                + ", time:" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 
-        //立即触发，每个5秒执行一次，直到16:11
-        scheduler.scheduleJob(job, trigger);
-//            在调用shutdown()之前，需要给job的触发和执行预留一些时间
-        Thread.sleep((1000 * (10 * 6)) * 3);
-        // 调用scheduler.shutdown( )终止scheduler
-        scheduler.shutdown();
     }
 
     private static Trigger repeatCountTrigger(JobDetail job) {

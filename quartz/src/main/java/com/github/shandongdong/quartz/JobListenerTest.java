@@ -1,15 +1,14 @@
 package com.github.shandongdong.quartz;
 
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.Trigger;
+import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.impl.matchers.EverythingMatcher;
+import org.quartz.impl.matchers.KeyMatcher;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static org.quartz.JobBuilder.newJob;
-import static org.quartz.TriggerBuilder.newTrigger;
-import static org.quartz.impl.matchers.EverythingMatcher.allJobs;
 
 /**
  * @Project: autotest
@@ -24,41 +23,40 @@ public class JobListenerTest {
     public static void main(String[] args) throws Exception {
 
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-        scheduler.start();
-
-        JobDetail job1 = newJob(HelloJob.class).build();
-
-        Trigger trigger1;
-
-        // 建立一个触发器，将在上午10:42每天发射
-        trigger1 = triggerDailyAtHourAndMinute(job1);
-
-        //设置调度计划
-        System.out.println("=============> 多job并发1111");
-        scheduler.scheduleJob(job1, trigger1);  // 多线程执行，后面的语句不用等这行执行完
-        System.out.println("=============> 多job并发22222");
 
 
-        // 添加监听
-        scheduler.getListenerManager().addJobListener(new MyJobListener("MyJobListener"), allJobs());
-
-
-//            在调用shutdown()之前，需要给job的触发和执行预留一些时间
-//        Thread.sleep((1000 * (10 * 6)) * 3);
-//        scheduler.shutdown();
-    }
-
-    private static Trigger triggerDailyAtHourAndMinute(JobDetail job) {
-        Trigger trigger = null;
-
-        trigger = newTrigger()
-                .withIdentity("trigger3", "group1")
-                .startAt(new Date())
-//                .withSchedule(simpleSchedule())
-                .forJob(job)
+        // 定义一个job，并将其与我们的 SimpleTriggerJob class 联系起来
+        JobDetail jobDetail = newJob(SimplerJob.class)
+                .withIdentity("job1", "group1")
                 .build();
 
-        return trigger;
+        String cronExpression = "0/2 * * 7 8 ?";     //表达式
+        boolean c = CronExpression.isValidExpression(cronExpression);
+        // 触发器
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity("trigger1", "group1")
+                .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))         // 使用日历方式设定定时器，只需要改着一行代码
+                .build();
+
+        scheduler.scheduleJob(jobDetail, trigger);
+
+        System.out.println("====================================调度器执行开始=========> Name:" + scheduler.getSchedulerName() + ", ID：" + scheduler.getSchedulerInstanceId()
+                + ", time:" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        scheduler.start();
+
+        // 全局的Job Listener
+//        scheduler.getListenerManager().addJobListener(new MyJobListener("自定义监听"), EverythingMatcher.allJobs());
+        /*
+        执行结果：
+            监听器的名称是:自定义监听
+            监听Scheduler在JobDetail将要被执行时调用的方法
+            ====== 正在执行Job任务................========>SimplerJob, time:2019-08-07 21:13:16
+            监听器的名称是:自定义监听
+            监听到Scheduler在JobDetail 被执行之后调用这个方法
+         */
+
+        // 局部的Job Listener
+        scheduler.getListenerManager().addJobListener(new MyJobListener("自定义监听"), KeyMatcher.keyEquals(JobKey.jobKey("job1", "group1")));
     }
 
 }

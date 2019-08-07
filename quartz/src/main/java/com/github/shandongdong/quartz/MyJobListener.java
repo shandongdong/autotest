@@ -23,39 +23,40 @@ public class MyJobListener implements JobListener {
 
     @Override
     public String getName() {
+        System.out.println("监听器的名称是:" + this.name);
         return this.name;
     }
 
 
     @Override
     public void jobToBeExecuted(JobExecutionContext jobExecutionContext) {
-        System.out.println("监听到Job准备开始执行");
+        System.out.println("监听Scheduler在JobDetail将要被执行时调用的方法");
     }
 
     @Override
     public void jobExecutionVetoed(JobExecutionContext jobExecutionContext) {
-        System.out.println("监听到Job被禁用了");
+        System.out.println("监听到Scheduler在JobDetail 即将被执行，但又被TriggerListener否决时会调用该方法");
 
     }
 
     @Override
     public void jobWasExecuted(JobExecutionContext jobExecutionContext, JobExecutionException e) {
-        System.out.println("监听到Job已经执行完成");
+        System.out.println("监听到Scheduler在JobDetail 被执行之后调用这个方法");
 
-        JobKey jobKey = jobExecutionContext.getJobDetail().getKey();
+//        JobKey jobKey = jobExecutionContext.getJobDetail().getKey();
+//
+//        try {
+//            jobExecutionContext.getScheduler().triggerJob(jobKey);
+//            System.out.println(jobKey.getName());
+//        } catch (SchedulerException ex) {
+//            ex.printStackTrace();
+//        }
 
-        try {
-            jobExecutionContext.getScheduler().triggerJob(jobKey);
-            System.out.println(jobKey.getName());
-        } catch (SchedulerException ex) {
-            ex.printStackTrace();
-        }
-
-        try {
-            jobExecutionContext.getScheduler().shutdown();  //执行完job之后关闭执行器
-        } catch (SchedulerException ex) {
-            ex.printStackTrace();
-        }
+//        try {
+//            jobExecutionContext.getScheduler().shutdown();  //执行完job之后关闭执行器
+//        } catch (SchedulerException ex) {
+//            ex.printStackTrace();
+//        }
 
 
     }

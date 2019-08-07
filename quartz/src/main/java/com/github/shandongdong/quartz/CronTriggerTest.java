@@ -1,19 +1,14 @@
 package com.github.shandongdong.quartz;
 
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.Trigger;
+import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
-import org.quartz.impl.matchers.KeyMatcher;
 
-import static org.quartz.CronScheduleBuilder.cronSchedule;
-import static org.quartz.CronScheduleBuilder.dailyAtHourAndMinute;
-import static org.quartz.DateBuilder.dateOf;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+
 import static org.quartz.JobBuilder.newJob;
-import static org.quartz.JobKey.jobKey;
-import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
-import static org.quartz.TriggerBuilder.newTrigger;
-import static org.quartz.impl.matchers.EverythingMatcher.allJobs;
+
 
 /**
  * @Project: autotest
@@ -31,55 +26,46 @@ public class CronTriggerTest {
     public static void main(String[] args) throws Exception {
 
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+        // 任务的开始时间
+        Date startDate = new Date();
+        // 延迟2秒执行
+        startDate.setTime(startDate.getTime() + 2000);
+        // 任务的结束时间
+        Date endDate = new Date();
+        endDate.setTime(endDate.getTime() + 10000);     // 延迟2秒开始执行，任务结束时间是10秒，那么这个任务理论上是时间是8秒
+
+
+        // 定义一个job，并将其与我们的 SimpleTriggerJob class 联系起来
+        JobDetail jobDetail = newJob(CronTriggerJob.class)
+                .withIdentity("job1", "group1")
+                .build();
+
+        String cronExpression = "0/2 * * 7 8 ?";     //表达式
+        boolean c = CronExpression.isValidExpression(cronExpression);
+        System.out.println("表达式是否正确：" + c);
+        // 触发器
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity("trigger1", "group1")
+                .startAt(startDate)          // 设置触发器第一次被触发执行的时间，默认是当前时间
+                .endAt(endDate)              // 设置触发器终止的时间
+                .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))         // 使用日历方式设定定时器，只需要改着一行代码
+                .build();
+
+        scheduler.scheduleJob(jobDetail, trigger);
+
+        System.out.println("====================================调度器执行开始=========> Name:" + scheduler.getSchedulerName() + ", ID：" + scheduler.getSchedulerInstanceId()
+                + ", time:" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         scheduler.start();
 
-        JobDetail job1 = newJob(HelloJob.class).build();
-        JobDetail job2 = newJob(HelloJob.class).build();
+        scheduler.standby();        // 暂停
+        System.out.println("暂定2秒");
+        Thread.sleep(2000);
 
-        Trigger trigger1;
-        Trigger trigger2;
+        scheduler.start();
+        scheduler.shutdown(true);
+        System.out.println("====================================调度器执行结束=========> Name:" + scheduler.getSchedulerName() + ", ID：" + scheduler.getSchedulerInstanceId()
+                + ", time:" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 
-        // 建立一个触发器，将在上午10:42每天发射
-        trigger1 = triggerDailyAtHourAndMinute(job1);
-        trigger2 = triggerDailyAtHourAndMinute2(job2);
-
-        //设置调度计划
-        System.out.println("=============> 多job并发1111");
-        scheduler.scheduleJob(job1, trigger1);
-        System.out.println("=============> 多job并发22222");
-//        scheduler.scheduleJob(job2, trigger2);
-        System.out.println("=============> 多job并发3333");
-
-//            在调用shutdown()之前，需要给job的触发和执行预留一些时间
-        Thread.sleep((1000 * (10 * 6)) * 3);
-        scheduler.shutdown();
-    }
-
-    // 建立一个触发器，将在上午10:42每天发射
-    private static Trigger triggerDailyAtHourAndMinute(JobDetail job) {
-        Trigger trigger = null;
-
-        trigger = newTrigger()
-                .withIdentity("trigger3", "group1")
-                .withSchedule(dailyAtHourAndMinute(18, 14)) // 第一种写法
-//                .withSchedule(cronSchedule("0 42 10 * * ?"))    // 第二种写法
-                .forJob(job)
-                .build();
-
-        return trigger;
-    }
-
-    // 建立一个触发器，将在上午10:42每天发射
-    private static Trigger triggerDailyAtHourAndMinute2(JobDetail job) {
-        Trigger trigger = null;
-
-        trigger = newTrigger()
-                .withIdentity("trigger4", "group2")
-                .withSchedule(cronSchedule("0 42 10 * * ?"))
-                .forJob(job)
-                .build();
-
-        return trigger;
     }
 
 }
