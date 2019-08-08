@@ -35,7 +35,7 @@ public class HelloJob implements Job {
      * @throws JobExecutionException 访问quartz运行时的环境以及job携带的数据
      */
     @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public void execute(JobExecutionContext jobExecutionContext) {
         Date date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dateString = simpleDateFormat.format(date);
@@ -68,7 +68,6 @@ public class HelloJob implements Job {
         ++count;
         System.out.println("count 的值为:" + count);
         jobExecutionContext.getJobDetail().getJobDataMap().put("count", count);     //需要注意的是这里只能用于JobDetail，而不能用于trigger
-
 
 
         System.out.println("====== Job execute end========>" + this.getClass().getSimpleName() + ", time:" + dateString);

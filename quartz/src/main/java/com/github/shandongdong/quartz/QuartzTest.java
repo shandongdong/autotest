@@ -9,7 +9,6 @@ import java.util.Date;
 
 import static org.quartz.CronScheduleBuilder.dailyAtHourAndMinute;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
-import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
  * @Project: autotest
@@ -64,8 +63,8 @@ public class QuartzTest {
             cal.addExcludedDate(new Date());
             scheduler.addCalendar("myHolidays", cal, false, false);
 
-            // 设置触发器
-            Trigger trigger1 = TriggerBuilder.newTrigger()
+            // 设置触发器2.一个job可以绑定多个触发器，但是一个触发器只能绑定一个job
+            Trigger trigger2 = TriggerBuilder.newTrigger()
                     .withIdentity("myTrigger2", "group2")
                     .forJob("job1")
                     .withSchedule(dailyAtHourAndMinute(9, 30))  // 设置触发器每天9:30开始执行

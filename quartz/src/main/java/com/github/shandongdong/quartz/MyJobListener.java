@@ -19,6 +19,7 @@ public class MyJobListener implements JobListener {
         } else {
             this.name = name;
         }
+        System.out.println(name + " Job被实例化");
     }
 
     @Override
@@ -42,6 +43,7 @@ public class MyJobListener implements JobListener {
     @Override
     public void jobWasExecuted(JobExecutionContext jobExecutionContext, JobExecutionException e) {
         System.out.println("监听到Scheduler在JobDetail 被执行之后调用这个方法");
+        System.out.println("\n");
 
 //        JobKey jobKey = jobExecutionContext.getJobDetail().getKey();
 //

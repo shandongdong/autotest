@@ -13,7 +13,7 @@ import java.util.Properties;
  * @Email: shandongdong@126.com
  * @Description:
  **/
-public class QuartzProperties {
+public class QuartzPropertiesTest {
     public static void main(String[] args) throws SchedulerException {
         StdSchedulerFactory stdSchedulerFactory = new StdSchedulerFactory();
 

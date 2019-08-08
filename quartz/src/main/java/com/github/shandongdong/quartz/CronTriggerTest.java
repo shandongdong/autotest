@@ -48,7 +48,7 @@ public class CronTriggerTest {
                 .withIdentity("trigger1", "group1")
                 .startAt(startDate)          // 设置触发器第一次被触发执行的时间，默认是当前时间
                 .endAt(endDate)              // 设置触发器终止的时间
-                .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))         // 使用日历方式设定定时器，只需要改着一行代码
+                .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))         // 使用日历方式设定定时器，只需要改这一行代码
                 .build();
 
         scheduler.scheduleJob(jobDetail, trigger);
