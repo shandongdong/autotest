@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <!--    这个作为父项目统一管理 -->
+    <!--    这个pom作为父项目统一管理所有依赖的版本信息  -->
     <groupId>com.github.shandongdong</groupId>
     <artifactId>autotest</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -12,66 +12,146 @@
         <!--        指定各个子工程相对路径 -->
         <module>notification</module>
         <module>quartz</module>
+        <module>ssm-config-demo</module>
     </modules>
     <!--    这里打包方式需要改为pom -->
     <packaging>pom</packaging>
+    <name>autotest</name>
+    <url>https://github.com/shandongdong</url>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <lombok.version>1.14.4</lombok.version>
-        <slf4j-api.version>1.8.0-beta2</slf4j-api.version>
-        <slf4j-log4j12.version>1.8.0-beta2</slf4j-log4j12.version>
-        <log4j.version>1.2.17</log4j.version>
-        <testng.version>6.14.3</testng.version>
+
+        <!-- 统一管理SSM整合包：Spring、Spring MVC、MyBatis、Spring整合MyBatis依赖 -->
+        <spring.version>5.1.6.RELEASE</spring.version>
+        <spring-mvc.version>5.1.6.RELEASE</spring-mvc.version>
+        <mybatis.versin>3.4.6</mybatis.versin>
+        <mybatis-spring.version>2.0.1</mybatis-spring.version>
     </properties>
     <!-- 统一管理依赖版本问题 -->
     <dependencyManagement>
         <dependencies>
+            <!-- 开始：Servlet 核心包 -->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>4.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet.jsp</groupId>
+                <artifactId>javax.servlet.jsp-api</artifactId>
+                <version>2.3.3</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>jstl</artifactId>
+                <version>1.2</version>
+            </dependency>
+            <!-- 结束：Servlet 核心包  -->
+            <!-- 开始：Spring 依赖包 -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>1.9.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>c3p0</artifactId>
+                <version>0.9.5.4</version>
+            </dependency>
+            <!-- 结束：Spring 依赖包 -->
+            <!-- 开始：Spring MVC -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${spring-mvc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring-mvc.version}</version>
+            </dependency>
+            <!-- 文件上传、下载 -->
+            <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>1.4</version>
+            </dependency>
+            <!-- 结束：Spring MVC -->
+            <!-- 开始：MyBatis -->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.versin}</version>
+            </dependency>
+            <!-- 结束：MyBatis -->
+            <!-- 开始：SSM整合适配包，用于整合 Spring 和 MyBatis。SpringMVC 只需要导入jar包然后配置springDispacherServlet-servlet.xml文件即可 -->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>${mybatis-spring.version}</version>
+            </dependency>
+            <!-- 结束：SSM整合适配包，用于整合 Spring 和 MyBatis。SpringMVC 只需要导入jar包然后配置springDispacherServlet-servlet.xml文件即可 -->
+            <!-- 开始：mysql驱动包 -->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>5.1.47</version>
+            </dependency>
+            <!-- 结束：mysql驱动包 -->
             <!-- 开始: lombok -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
+                <version>1.14.4</version>
             </dependency>
             <!-- 结束: lombok -->
             <!-- 开始: 日志 -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>${slf4j-api.version}</version>
+                <version>1.8.0-beta2</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-log4j12</artifactId>
-                <version>${slf4j-log4j12.version}</version>
+                <version>1.8.0-beta2</version>
             </dependency>
             <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
-                <version>${log4j.version}</version>
+                <version>1.2.17</version>
             </dependency>
             <!-- 结束: 日志 -->
-
+            <!-- 开始：JSON  -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.54</version>
+            </dependency>
+            <!-- 结束：JSON  -->
+            <!-- 开始: TestNG依赖jar包 -->
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>${testng.version}</version>
-                <scope>test</scope>
+                <version>6.14.3</version>
             </dependency>
-
-            <!-- quartz核心包 -->
-            <dependency>
-                <groupId>org.quartz-scheduler</groupId>
-                <artifactId>quartz</artifactId>
-                <version>2.3.1</version>
-            </dependency>
-            <!-- quartz-jobs 工具包 -->
-            <dependency>
-                <groupId>org.quartz-scheduler</groupId>
-                <artifactId>quartz-jobs</artifactId>
-                <version>2.3.1</version>
-            </dependency>
-
-
+            <!-- 结束: TestNG依赖jar包 -->
         </dependencies>
     </dependencyManagement>
 

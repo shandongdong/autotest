@@ -9,12 +9,13 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+    <description>Step1:这个模块是用于备份SSM配置模板的项目。step2:需要自己先到数据库中创一个 `user`表。step3:resources/db.properties 需要修改连接信息
+    </description>
 
-    <artifactId>quartz</artifactId>
+    <artifactId>ssm-config-demo</artifactId>
     <packaging>war</packaging>
-    <description>任务调度、定时任务</description>
 
-    <name>quartz Maven Webapp</name>
+    <name>ssm-config-demo Maven Webapp</name>
     <url>https://github.com/shandongdong</url>
 
     <properties>
@@ -24,18 +25,6 @@
     </properties>
 
     <dependencies>
-        <!-- quartz核心包 -->
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
-            <version>2.3.1</version>
-        </dependency>
-        <!-- quartz-jobs 工具包 -->
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz-jobs</artifactId>
-            <version>2.3.1</version>
-        </dependency>
         <!-- 开始：Servlet 核心包 -->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -141,7 +130,7 @@
     </dependencies>
 
     <build>
-        <finalName>quartz</finalName>
+        <finalName>ssm-config-demo</finalName>
         <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
             <plugins>
                 <plugin>
