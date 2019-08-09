@@ -46,4 +46,14 @@
         <property name="basePackage" value="com.github.shandongdong.quartz.mapper"></property>
     </bean>
 
+    <!-- Spring 整合 Quartz -->
+    <bean id="schedulerFactoryBean" name="quartzScheduler"
+          class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <!-- 配置了DataSource会读取Spring配置的数据库，不会加载quartz.properties配置的数据源 -->
+        <property name="dataSource" ref="dataSource"></property>
+        <!-- 获取Spring容器中的context -->
+        <property name="applicationContextSchedulerContextKey" value="applicationContextKey"></property>
+        <!-- 加载quartz.properties 配置文件 -->
+        <property name="configLocation" value="classpath:quartz.properties"></property>
+    </bean>
 </beans>
