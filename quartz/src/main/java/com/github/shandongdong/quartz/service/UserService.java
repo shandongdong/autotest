@@ -22,4 +22,7 @@ public class UserService {
         User user = userMapper.getUserById(id);
         return user;
     }
+    public User getUser(User u) {
+        return userMapper.findUser(u);
+    }
 }

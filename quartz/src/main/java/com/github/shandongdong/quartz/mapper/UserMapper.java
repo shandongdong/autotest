@@ -11,4 +11,5 @@ import com.github.shandongdong.quartz.beans.User;
  **/
 public interface UserMapper {
     User getUserById(Integer integer);
+    User findUser(User user);
 }

@@ -6,6 +6,8 @@
 <body>
 <h2>Hello World!</h2>
 
+<a href="user/jumpLogin">去登录</a>
+<br/>
 <a href="${pageContext.request.contextPath}/user/getUserById?id=1">获取用户信息</a>
 <br/>
 </body>

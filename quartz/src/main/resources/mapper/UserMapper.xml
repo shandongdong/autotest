@@ -14,6 +14,7 @@
         <result column="pass_word" property="passWord"></result>
         <result column="age" property="age"></result>
     </resultMap>
+    <sql id="Base_Column_List">id, user_name, pass_word, age</sql>
     <!--         User getUserById(Integer integer);-->
     <select id="getUserById" resultMap="BaseResultMap">
         SELECT
@@ -25,5 +26,12 @@
             `user`
         WHERE
 	        id = #{userId};
+    </select>
+    <!--        User findUser(User user); -->
+    <select id="findUser" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where user_name = #{userName,jdbcType=VARCHAR} AND pass_word = #{passWord,jdbcType=VARCHAR}
     </select>
 </mapper>

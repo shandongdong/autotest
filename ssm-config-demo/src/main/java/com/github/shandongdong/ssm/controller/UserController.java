@@ -1,12 +1,9 @@
 package com.github.shandongdong.ssm.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.github.shandongdong.ssm.beans.User;
 import com.github.shandongdong.ssm.service.UserService;
-import com.github.shandongdong.ssm.util.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,7 +18,7 @@ import java.util.HashMap;
  * @Email: shandongdong@126.com
  * @Description:
  **/
-@RequestMapping(value = "user")
+@RequestMapping(value = "/user")
 @Controller
 public class UserController {
     @Autowired

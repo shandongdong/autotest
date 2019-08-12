@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 // 告诉junit spring配置文件
 @ContextConfiguration(locations = {"classpath:springApplicationContext.xml"})
-public class UserServiceTest {
+public class UserServiceTestByJunit {
     @Autowired
     public UserService userService;
 
