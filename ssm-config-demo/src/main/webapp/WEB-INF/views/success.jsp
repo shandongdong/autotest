@@ -9,7 +9,7 @@
 <html>
 <head>
     <title>Index</title>
-    <%--    <link rel="stylesheet" type="text/css" href="../statics/css/success.css">--%>
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath }/statics/css/success.css">
 </head>
 <body>
 <h2>Test success!</h2>
