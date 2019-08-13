@@ -91,6 +91,6 @@ public class UserController {
 
     @RequestMapping(value = "jumpLogin")
     public String login() {
-        return "user/login";
+        return "/user/login";
     }
 }

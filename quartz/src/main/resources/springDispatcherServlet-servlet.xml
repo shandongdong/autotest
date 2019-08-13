@@ -10,10 +10,8 @@
     <mvc:annotation-driven/>
     <mvc:default-servlet-handler/>
 
-    <!--静态资源映射-->
-    <mvc:resources mapping="/css/**" location="/WEB-INF/statics/css/"/>
-    <mvc:resources mapping="/js/**" location="/WEB-INF/statics/js/"/>
-    <mvc:resources mapping="/image/**" location="/WEB-INF/statics/images/"/>
+    <!-- 静态资源映射 -->
+    <mvc:resources mapping="/static/**" location="/WEB-INF/static/"/>
 
     <!--  1. 组件扫描 -->
     <context:component-scan base-package="com.github.shandongdong" use-default-filters="false">
