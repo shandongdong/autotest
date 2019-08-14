@@ -25,6 +25,9 @@ public class QuartzService {
      */
     public void addJob(String jobName, String jobGroupName, String triggerName,
                        String triggerGroupName, Class cls, String cron) {
+        JobDataMap jobExtraDataMap = new JobDataMap();
+        // TODO:带补充具体的业务逻辑
+        jobExtraDataMap.put(jobName, "This is a temp test 0101");
         try {
             // 获取调度器
             Scheduler sched = quartzScheduler;
@@ -35,6 +38,7 @@ public class QuartzService {
             CronTrigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity(triggerName, triggerGroupName)
                     .withSchedule(CronScheduleBuilder.cronSchedule(cron))
+                    .usingJobData(jobExtraDataMap)
                     .build();
             // 告诉调度器使用该触发器来安排作业
             sched.scheduleJob(job, trigger);

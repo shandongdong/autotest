@@ -116,7 +116,7 @@
                     <td class='center' style="width: auto;">
                             <%-- <a class="btn btn-minier btn-info" onclick="triggerJob('${var.jobName}','${var.jobGroup}');"><i class="icon-edit"></i>运行</a> --%>
                         <a class="btn btn-minier btn-success" onclick="edit('${var.jobName}','${var.jobGroup}');"><i
-                                class="icon-edit"></i>编辑</a><br>
+                                class="icon-edit"></i>编辑</a>
                         <a class="btn btn-minier btn-warning" onclick="pauseJob('${var.jobName}','${var.jobGroup}');"><i
                                 class="icon-edit"></i>暂停</a>
                         <a class="btn btn-minier btn-purple" onclick="resumeJob('${var.jobName}','${var.jobGroup}');"><i

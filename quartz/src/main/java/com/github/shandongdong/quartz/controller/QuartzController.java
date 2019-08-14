@@ -221,12 +221,13 @@ public class QuartzController {
                     Trigger.TriggerState triggerState = quartzScheduler
                             .getTriggerState(trigger.getKey());
                     jobInfo.setJobStatus(triggerState.toString());
-                    // NONE无,
-                    // NORMAL正常,
-                    // PAUSED暂停,
-                    // COMPLETE完全,
-                    // ERROR错误,
-                    // BLOCKED阻塞
+                    // 触发器任务状态:qrtz_trigger.trigger_state
+                    // NONE 无或删除,
+                    // NORMAL 正常,
+                    // PAUSED 暂停,
+                    // COMPLETE 完成,
+                    // ERROR 错误,
+                    // BLOCKED 阻塞
                     JobDataMap map = quartzScheduler.getJobDetail(jobKey)
                             .getJobDataMap();
                     if (null != map && map.size() != 0) {

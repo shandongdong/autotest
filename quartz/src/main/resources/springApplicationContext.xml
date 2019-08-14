@@ -51,6 +51,10 @@
           class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <!-- 配置了DataSource会读取Spring配置的数据库，不会加载quartz.properties配置的数据源 -->
         <property name="dataSource" ref="dataSource"></property>
+        <!--可选，QuartzScheduler 启动时更新己存在的Job，这样就不用每次修改targetObject后删除qrtz_job_details表对应记录了 -->
+        <property name="overwriteExistingJobs" value="true"></property>
+        <!--QuartzScheduler 延时启动，应用启动完后 QuartzScheduler 再启动 -->
+        <property name="startupDelay" value="3"></property>
         <!-- 获取Spring容器中的context -->
         <property name="applicationContextSchedulerContextKey" value="applicationContextKey"></property>
         <!-- 加载quartz.properties 配置文件 -->
