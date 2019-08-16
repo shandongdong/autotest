@@ -102,9 +102,6 @@ CREATE TABLE `qrtz_fired_triggers`
     PRIMARY KEY (`sched_name`, `entry_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
-INSERT INTO `qrtz_fired_triggers`
-VALUES ('dufy_test', 'NON_CLUSTERED1487230171387', 'trigger1', 'group1', 'NON_CLUSTERED', '1487230212028',
-        '1487230214000', '5', 'ACQUIRED', null, null, '0', '0');
 
 -- ----------------------------
 -- step5: 存储Cron Trigger，包括Cron表达式和时区信息。
@@ -190,13 +187,6 @@ CREATE TABLE `qrtz_locks`
     PRIMARY KEY (`sched_name`, `lock_name`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
-INSERT INTO `qrtz_locks`
-VALUES ('dufy_test', 'TRIGGER_ACCESS');
-INSERT INTO `qrtz_locks`
-VALUES ('quartzScheduler', 'TRIGGER_ACCESS');
-INSERT INTO `qrtz_locks`
-VALUES ('scheduler', 'TRIGGER_ACCESS');
-
 
 -- ----------------------------
 -- step11: Table structure for qrtz_simprop_triggers
