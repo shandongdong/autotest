@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+    <form>
+        <p>
+            <label for="taste_1">I like cherry</label>
+            <input type="checkbox" id="taste_1" name="taste_cherry" value="1">
+        </p>
+        <p>
+            <label for="taste_2">I like banana</label>
+            <input type="checkbox" id="taste_2" name="taste_banana" value="2">
+        </p>
+    </form>
+</div>
+<div>
+    <form>
+        <fieldset>
+            <legend>Fruit juice size</legend>
+            <p>
+                <input type="radio" name="size" id="size_1" value="small">
+                <label for="size_1">Small</label>
+            </p>
+            <p>
+                <input type="radio" name="size" id="size_2" value="medium">
+                <label for="size_2">Medium</label>
+            </p>
+            <p>
+                <input type="radio" name="size" id="size_3" value="large">
+                <!--    <label> 标签与 <input> 通过他们各自的for 属性和 id 属性正确相关联-->
+                <label for="size_32">Large</label>
+            </p>
+        </fieldset>
+    </form>
+</div>
+</body>
+</html>

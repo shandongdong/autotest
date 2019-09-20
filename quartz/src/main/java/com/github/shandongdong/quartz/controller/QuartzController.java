@@ -68,9 +68,8 @@ public class QuartzController {
         String triggerName = request.getParameter("triggerName");
         String triggerGroupName = request.getParameter("triggerGroupName");
         String clazz = request.getParameter("clazz");
-        Class cls = Class.forName(clazz);
         String cron = request.getParameter("cron");
-        quartzService.addJob(jobName, jobGroupName, triggerName, triggerGroupName, cls, cron);
+        quartzService.addTimeJob(jobName, jobGroupName, triggerName, triggerGroupName, clazz, cron, null);
         request.setAttribute("message", "添加任务成功!");
         request.setAttribute("opName", "添加任务!");
         return "quartz/message";
@@ -135,7 +134,7 @@ public class QuartzController {
         String oldtriggerGroup = request.getParameter("oldtriggerGroup");
 
         boolean result = quartzService.modifyJobTime(oldjobName, oldjobGroup, oldtriggerName, oldtriggerGroup,
-                jobName, jobGroupName, triggerName, triggerGroupName, cron);
+                jobName, jobGroupName, triggerName, triggerGroupName, cron, null);
         if (result) {
             request.setAttribute("message", "修改任务成功!");
         } else {

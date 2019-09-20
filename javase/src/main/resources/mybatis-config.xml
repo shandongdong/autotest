@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!-- 此配置读取在 springApplicationContext.xml 中指定 -->
+    <!-- 属性配置文件，可以加载一个外部文件或者url -->
+    <!--    <properties resource="db.properties">-->
+    <!--        &lt;!&ndash;        <property name="jdbc.driver" value="com.mysql.jdbc.Driver"/>&ndash;&gt;-->
+    <!--    </properties>-->
+
+    <!-- 运行时配置 -->
+    <settings>
+        <!-- 配置将“_”格式转换为方法名驼峰风格 -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <!-- 开启延迟加载 -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!-- 配置按需加载-->
+        <setting name="aggressiveLazyLoading" value="false"/>
+    </settings>
+
+    <!--    <environments default="development">-->
+    <!--        <environment id="development">-->
+    <!--            <transactionManager type="JDBC"/>-->
+    <!--            <dataSource type="POOLED">-->
+    <!--                <property name="driver" value="${jdbc.driver}"/>-->
+    <!--                <property name="url" value="${jdbc.url}"/>-->
+    <!--                <property name="username" value="${jdbc.username}"/>-->
+    <!--                <property name="password" value="${jdbc.password}"/>-->
+    <!--            </dataSource>-->
+    <!--        </environment>-->
+    <!--        &lt;!&ndash; 配置多个环境。开发、测试、线上 &ndash;&gt;-->
+    <!--        <environment id="qa">-->
+    <!--            <transactionManager type="JDBC"></transactionManager>-->
+    <!--            <dataSource type="POOLED"></dataSource>-->
+    <!--        </environment>-->
+    <!--    </environments>-->
+
+
+    <!-- 引入SQL映射文件 -->
+    <!--    <mappers>-->
+    <!--        &lt;!&ndash; 批量引入SQL映射文件-->
+    <!--             要求：SQL映射文件必须与Mapper接口 同名 同路径 &ndash;&gt;-->
+    <!--        <package name="com.github.shandongdong.dao"/>-->
+    <!--    </mappers>-->
+</configuration>

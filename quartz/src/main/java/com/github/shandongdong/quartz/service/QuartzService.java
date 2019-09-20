@@ -4,47 +4,44 @@ import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 public class QuartzService {
 
     @Autowired
-    private Scheduler quartzScheduler;
+    private Scheduler scheduler;
 
     /**
-     * addJob(方法描述：添加一个定时任务) <br />
-     * (方法适用条件描述： – 可选)
+     * 添加一个定时任务, 按照时间表达规则循环执行
      *
-     * @param jobName          作业名称
-     * @param jobGroupName     作业组名称
+     * @param jobName          Job名称
+     * @param jobGroupName     JOb组名称
      * @param triggerName      触发器名称
      * @param triggerGroupName 触发器组名称
-     * @param cls              定时任务的class
-     * @param cron             时间表达式 void
-     * @throws
-     * @since 1.0.0
+     * @param clazz            定时任务的class
+     * @param cronExpression   时间表达式
+     * @param jobExtraDataMap  创建job时携带的参数，无的话传null即可
      */
-    public void addJob(String jobName, String jobGroupName, String triggerName,
-                       String triggerGroupName, Class cls, String cron) {
-        JobDataMap jobExtraDataMap = new JobDataMap();
-        // TODO:带补充具体的业务逻辑
-        jobExtraDataMap.put(jobName, "This is a temp test 0101");
+    public void addTimeJob(String jobName, String jobGroupName, String triggerName, String triggerGroupName,
+                           String clazz, String cronExpression, JobDataMap jobExtraDataMap) {
         try {
-            // 获取调度器
-            Scheduler sched = quartzScheduler;
+            Class cls = Class.forName(clazz);
             // 创建一项作业
-            JobDetail job = JobBuilder.newJob(cls)
-                    .withIdentity(jobName, jobGroupName).build();
+            JobDetail job = JobBuilder.newJob(cls).withIdentity(jobName, jobGroupName).build();
             // 创建一个触发器
-            CronTrigger trigger = TriggerBuilder.newTrigger()
+            TriggerBuilder<CronTrigger> triggerTriggerBuilder = TriggerBuilder.newTrigger()
                     .withIdentity(triggerName, triggerGroupName)
-                    .withSchedule(CronScheduleBuilder.cronSchedule(cron))
-                    .usingJobData(jobExtraDataMap)
-                    .build();
+                    .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression));
+            if (null != jobExtraDataMap) {
+                triggerTriggerBuilder.usingJobData(jobExtraDataMap);
+            }
+            CronTrigger trigger = triggerTriggerBuilder.build();
             // 告诉调度器使用该触发器来安排作业
-            sched.scheduleJob(job, trigger);
+            scheduler.scheduleJob(job, trigger);
             // 启动
-            if (!sched.isShutdown()) {
-                sched.start();
+            if (!scheduler.isShutdown()) {
+                scheduler.start();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -52,43 +49,64 @@ public class QuartzService {
     }
 
     /**
+     * 添加一个执行任务, 立即触发来执行，用于手动执行任务
+     */
+    public void addRunOnceJob(String jobName, String jobGroupName, String triggerName, String triggerGroupName,
+                              String clazz, JobDataMap jobExtraDataMap) {
+        try {
+            Class cls = Class.forName(clazz);
+            // 创建一项作业
+            JobDetail job = JobBuilder.newJob(cls).withIdentity(jobName, jobGroupName).build();
+
+            // 触发时间点
+            SimpleScheduleBuilder simpleScheduleBuilder = SimpleScheduleBuilder.simpleSchedule().withRepeatCount(0);
+
+            TriggerBuilder<SimpleTrigger> simpleTriggerTriggerBuilder = TriggerBuilder.newTrigger().withIdentity(triggerName, triggerGroupName).withSchedule(simpleScheduleBuilder).startAt(new Date());
+            if (null != jobExtraDataMap) {
+                simpleTriggerTriggerBuilder.usingJobData(jobExtraDataMap);
+            }
+            Trigger trigger = simpleTriggerTriggerBuilder.build();
+            scheduler.scheduleJob(job, trigger);
+            // 启动
+            if (!scheduler.isShutdown()) {
+                scheduler.start();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
      * 修改定时器任务信息
      *
-     * @param oldjobName      原job name
-     * @param oldjobGroup     原job group
-     * @param oldtriggerName  原 trigger name
-     * @param oldtriggerGroup 原 trigger group
-     * @param jobName
-     * @param jobGroup
-     * @param triggerName
-     * @param triggerGroup
-     * @param cron
+     * @param oldJobName      原job name
+     * @param oldJobGroup     原job group
+     * @param oldTriggerName  原trigger name
+     * @param oldTriggerGroup 原trigger group
+     * @see #addTimeJob(String, String, String, String, String, String, JobDataMap)
      */
-    public boolean modifyJobTime(String oldjobName, String oldjobGroup, String oldtriggerName, String oldtriggerGroup, String jobName, String jobGroup,
-                                 String triggerName, String triggerGroup, String cron) {
+    public boolean modifyJobTime(String oldJobName, String oldJobGroup, String oldTriggerName, String oldTriggerGroup,
+                                 String newJobName, String newJobGroup, String newTriggerName, String newTriggerGroup,
+                                 String newCronExpression, JobDataMap newJobExtraDataMap) {
         try {
-            Scheduler sched = quartzScheduler;
-            CronTrigger trigger = (CronTrigger) sched.getTrigger(TriggerKey
-                    .triggerKey(oldtriggerName, oldtriggerGroup));
+            CronTrigger trigger = (CronTrigger) scheduler.getTrigger(TriggerKey.triggerKey(oldTriggerName, oldTriggerGroup));
             if (trigger == null) {
                 return false;
             }
+            JobKey jobKey = JobKey.jobKey(oldJobName, oldJobGroup);
+            TriggerKey triggerKey = TriggerKey.triggerKey(oldTriggerName, oldTriggerGroup);
 
-            JobKey jobKey = JobKey.jobKey(oldjobName, oldjobGroup);
-            TriggerKey triggerKey = TriggerKey.triggerKey(oldtriggerName,
-                    oldtriggerGroup);
-
-            JobDetail job = sched.getJobDetail(jobKey);
-            Class jobClass = job.getJobClass();
+            JobDetail job = scheduler.getJobDetail(jobKey);
+            String jobClass = job.getJobClass().getName();
             // 停止触发器
-            sched.pauseTrigger(triggerKey);
+            scheduler.pauseTrigger(triggerKey);
             // 移除触发器
-            sched.unscheduleJob(triggerKey);
+            scheduler.unscheduleJob(triggerKey);
             // 删除任务
-            sched.deleteJob(jobKey);
-
-            addJob(jobName, jobGroup, triggerName, triggerGroup, jobClass,
-                    cron);
+            scheduler.deleteJob(jobKey);
+            // 添加任务
+            addTimeJob(newJobName, newJobGroup, newTriggerName, newTriggerGroup, jobClass, newCronExpression, newJobExtraDataMap);
 
             return true;
         } catch (Exception e) {
@@ -102,27 +120,23 @@ public class QuartzService {
      *
      * @param triggerName      触发器名称
      * @param triggerGroupName 触发器组名称
-     * @param cron             cron表达式
+     * @param cronExpression   表达式
      */
-    public void modifyJobTime(String triggerName, String triggerGroupName,
-                              String cron) {
+    public void modifyJobTime(String triggerName, String triggerGroupName, String cronExpression) {
         try {
-            Scheduler sched = quartzScheduler;
-            CronTrigger trigger = (CronTrigger) sched.getTrigger(TriggerKey
-                    .triggerKey(triggerName, triggerGroupName));
+            CronTrigger trigger = (CronTrigger) scheduler.getTrigger(TriggerKey.triggerKey(triggerName, triggerGroupName));
             if (trigger == null) {
                 return;
             }
             String oldTime = trigger.getCronExpression();
-            if (!oldTime.equalsIgnoreCase(cron)) {
+            if (!oldTime.equalsIgnoreCase(cronExpression)) {
                 CronTrigger ct = (CronTrigger) trigger;
                 // 修改时间
                 ct.getTriggerBuilder()
-                        .withSchedule(CronScheduleBuilder.cronSchedule(cron))
+                        .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
                         .build();
                 // 重启触发器
-                sched.resumeTrigger(TriggerKey.triggerKey(triggerName,
-                        triggerGroupName));
+                scheduler.resumeTrigger(TriggerKey.triggerKey(triggerName, triggerGroupName));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -137,18 +151,14 @@ public class QuartzService {
      * @param triggerName      触发器名称
      * @param triggerGroupName 触发器组名称
      */
-    public void removeJob(String jobName, String jobGroupName,
-                          String triggerName, String triggerGroupName) {
+    public void removeJob(String jobName, String jobGroupName, String triggerName, String triggerGroupName) {
         try {
-            Scheduler sched = quartzScheduler;
             // 停止触发器
-            sched.pauseTrigger(TriggerKey.triggerKey(triggerName,
-                    triggerGroupName));
+            scheduler.pauseTrigger(TriggerKey.triggerKey(triggerName, triggerGroupName));
             // 移除触发器
-            sched.unscheduleJob(TriggerKey.triggerKey(triggerName,
-                    triggerGroupName));
+            scheduler.unscheduleJob(TriggerKey.triggerKey(triggerName, triggerGroupName));
             // 删除任务
-            sched.deleteJob(JobKey.jobKey(jobName, jobGroupName));
+            scheduler.deleteJob(JobKey.jobKey(jobName, jobGroupName));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -159,8 +169,7 @@ public class QuartzService {
      */
     public void startSchedule() {
         try {
-            Scheduler sched = quartzScheduler;
-            sched.start();
+            scheduler.start();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -171,9 +180,8 @@ public class QuartzService {
      */
     public void shutdownSchedule() {
         try {
-            Scheduler sched = quartzScheduler;
-            if (!sched.isShutdown()) {
-                sched.shutdown();
+            if (!scheduler.isShutdown()) {
+                scheduler.shutdown();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -189,11 +197,10 @@ public class QuartzService {
      */
     public void pauseJob(String jobName, String jobGroupName) {
         try {
-            quartzScheduler.pauseJob(JobKey.jobKey(jobName, jobGroupName));
+            scheduler.pauseJob(JobKey.jobKey(jobName, jobGroupName));
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -205,11 +212,10 @@ public class QuartzService {
      */
     public void resumeJob(String jobName, String jobGroupName) {
         try {
-            quartzScheduler.resumeJob(JobKey.jobKey(jobName, jobGroupName));
+            scheduler.resumeJob(JobKey.jobKey(jobName, jobGroupName));
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
     }
-
 
 }

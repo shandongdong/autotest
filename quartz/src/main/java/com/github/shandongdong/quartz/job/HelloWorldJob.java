@@ -22,7 +22,7 @@ public class HelloWorldJob implements Job {
         // 这里可以通过Job携带的参数JobMap参数将测试用例传递过来执行。
 
         JobKey jobKey = jobExecutionContext.getJobDetail().getKey();
-        System.out.println(new Date() + " ======================>execute job:" + jobKey.getName() + ", group:" + jobKey.getGroup());
+        System.out.println(new Date() + " ======================>execute job:" + jobKey.getName() + ", group:" + jobKey.getGroup() + ", Thread:" + Thread.currentThread().getId());
 
 
         // 提供一个 testCaseContent 属性和setter方法之后，Quartz框架默认的JobFactory实现类在初始化时会自动调用setter方法
@@ -33,8 +33,8 @@ public class HelloWorldJob implements Job {
         String data = jobDataMap.getString(jobKey.getName());
         System.out.println("创建Job时携带了数据：" + jobDataMap + ", data=" + data);
         try {
-            System.out.println("睡眠5秒，让job错误触发时间");
-            Thread.sleep(5000);
+//            System.out.println("睡眠5秒，让job错误触发时间");
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
