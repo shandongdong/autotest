@@ -13,7 +13,14 @@
         <module>notification</module>
         <module>quartz</module>
         <module>ssm-config-demo</module>
+        <module>sw-bd-date-conllction</module>
     </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
     <!--    这里打包方式需要改为pom -->
     <packaging>pom</packaging>
     <name>autotest</name>
